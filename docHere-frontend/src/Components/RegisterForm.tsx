@@ -2,7 +2,8 @@ import { FC, useState } from "react";
 import { useForm } from "../Hooks/FormValidation";
 
 interface RoleProps {
-    role: String
+  role: String;
+//   updateErrors: ({}) => void;
 }
 
 interface User{
@@ -58,7 +59,7 @@ const RegisterForm: FC<RoleProps> = (props: RoleProps): JSX.Element => {
             message: "This field is mandatory",
           },
           custom: {
-            isValid: (value) => value === checkPassword.password,
+            isValid: (value) => value === user?.password,
             message: `Passwords don't match`,
           },
         },
@@ -66,8 +67,6 @@ const RegisterForm: FC<RoleProps> = (props: RoleProps): JSX.Element => {
       onSubmit: () => alert("User Submitted"),
     });
     
-    
-    const [checkPassword, setCheckPassword] = useState({password: ''})
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     
@@ -77,21 +76,15 @@ const RegisterForm: FC<RoleProps> = (props: RoleProps): JSX.Element => {
     const handleShowConfirmPassword = () => {
         setShowConfirmPassword(!showConfirmPassword);
     }
-    const handleConfirmPassword = (e: any) => {
-        const { value, name } = e.target;        
-        setCheckPassword({...checkPassword, [name]: value})
-    }
-    // console.log(checkPassword);
-    const handlePassword = (e: any) => {
-        
-        handleConfirmPassword(e);
-    }
+    // const handleErrorChange = () => {
+    //     props.updateErrors(errors);
+    // }
 
   return (
     <>
       <div className="p-5 ">
         <form
-          onSubmit={handleSubmit}
+          onSubmit={() => {handleSubmit; }}
           className="bg-white shadow-xl rounded-2xl px-8 pt-6 pb-8 mb-4 border-8 border-main-blue"
         >
           <h1 className="text-center font-bold text-2xl text-main-blue">
@@ -144,7 +137,7 @@ const RegisterForm: FC<RoleProps> = (props: RoleProps): JSX.Element => {
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
-                onChange={handleChange("password")}
+                onChange={handleChange('password')}
                 value={user.password || ""}
                 placeholder="*******"
                 autoComplete="on"
@@ -194,9 +187,6 @@ const RegisterForm: FC<RoleProps> = (props: RoleProps): JSX.Element => {
           </div>
           <div className="flex items-center justify-between">
             <button
-              //   onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
-              //     handleSubmit
-              //   }
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >

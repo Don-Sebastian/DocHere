@@ -41,7 +41,7 @@ export const useForm = <T extends Record<keyof T, any> = {}>(options?: {
             [key]: value,
         });
     };
-    console.log(data);
+    
     
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         
