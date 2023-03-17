@@ -1,9 +1,10 @@
 import { FC, useState } from "react";
+import { Link } from "react-router-dom";
 import { useForm } from "../Hooks/FormValidation";
 
 interface RoleProps {
   role: String;
-//   updateErrors: ({}) => void;
+  updateForm: (arg: User) => void;
 }
 
 interface User{
@@ -64,7 +65,7 @@ const RegisterForm: FC<RoleProps> = (props: RoleProps): JSX.Element => {
           },
         },
       },
-      onSubmit: () => alert("User Submitted"),
+      onSubmit: () => handleErrorChange(),
     });
     
     const [showPassword, setShowPassword] = useState(false);
@@ -76,16 +77,18 @@ const RegisterForm: FC<RoleProps> = (props: RoleProps): JSX.Element => {
     const handleShowConfirmPassword = () => {
         setShowConfirmPassword(!showConfirmPassword);
     }
-    // const handleErrorChange = () => {
-    //     props.updateErrors(errors);
-    // }
+    
+    const handleErrorChange = () => {        
+        if (Object.keys(errors).length === 0) props.updateForm(user)
+    }
+    
 
   return (
     <>
-      <div className="p-5 ">
+      <div className="lg:p-5 ">
         <form
-          onSubmit={() => {handleSubmit; }}
-          className="bg-white shadow-xl rounded-2xl px-8 pt-6 pb-8 mb-4 border-8 border-main-blue"
+          onSubmit={handleSubmit}
+          className="bg-white shadow-xl rounded-2xl lg:px-8 lg:pt-6 lg:pb-8 lg:mb-4 lg:border-8 border-4 p-5 lg:p-0 border-main-blue"
         >
           <h1 className="text-center font-bold text-2xl text-main-blue">
             {props ? `Register ${props.role}` : ""}
@@ -137,7 +140,7 @@ const RegisterForm: FC<RoleProps> = (props: RoleProps): JSX.Element => {
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
-                onChange={handleChange('password')}
+                onChange={handleChange("password")}
                 value={user.password || ""}
                 placeholder="*******"
                 autoComplete="on"
@@ -154,7 +157,7 @@ const RegisterForm: FC<RoleProps> = (props: RoleProps): JSX.Element => {
               <p className="text-red-500 text-xs italic">{errors.password}</p>
             )}
           </div>
-          <div className="mb-6 relative">
+          <div className="mb-3 relative">
             <label className=" text-gray-700 text-sm font-bold mb-2">
               Confirm Password
             </label>
@@ -162,7 +165,7 @@ const RegisterForm: FC<RoleProps> = (props: RoleProps): JSX.Element => {
               <input
                 className={`shadow appearance-none border rounded w-full py-2 px-3
                 ${errors.confirmPassword ? "border-red-500" : "text-gray-700"} 
-                mb-3 leading-tight focus:outline-none focus:shadow-outline`}
+                mb-1 leading-tight focus:outline-none focus:shadow-outline`}
                 id="confirm-password"
                 name="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
@@ -185,24 +188,20 @@ const RegisterForm: FC<RoleProps> = (props: RoleProps): JSX.Element => {
               </p>
             )}
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-row mb-6">
+          <p className="text-gray-700 text-sm">Already have an account?</p>
+          <p className="ml-2 font-bold text-sm text-blue-500 hover:text-blue-800"><Link to={'/login'}>Login</Link></p>
+          </div>
+            
+          <div className="flex items-center justify-center">
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-blue-500 lg:w-1/2 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
               Register
             </button>
-            <a
-              className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-              href="#"
-            >
-              Forgot Password?
-            </a>
           </div>
         </form>
-        <p className="text-center text-gray-500 text-xs">
-          &copy;2020 Acme Corp. All rights reserved.
-        </p>
       </div>
     </>
   );

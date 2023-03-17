@@ -79,7 +79,7 @@ export const useForm = <T extends Record<keyof T, any> = {}>(options?: {
         setErrors({});
 
         if (options?.onSubmit) {
-            options.onSubmit;
+            options.onSubmit();
         }
     }
     return {
