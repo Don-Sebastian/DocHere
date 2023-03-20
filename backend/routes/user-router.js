@@ -1,9 +1,13 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 const express = require('express');
 
 const router = express.Router();
-const userController = require('../controller/userController');
+const UserController = require('../controller/userController');
+const Auth = require('../middleware/auth');
 
-router.post('/register', userController.postRegister);
-router.post('/login', userController.postLogin);
+router.post('/register', UserController.postRegister);
+router.post('/login', UserController.postLogin);
+
+router.post('/post-user-by-id', Auth.verifyAuth, UserController.postHomePage);
 
 module.exports = router;

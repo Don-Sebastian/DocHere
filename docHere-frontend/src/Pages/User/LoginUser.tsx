@@ -23,11 +23,14 @@ const LoginUser: FC = () => {
 
     useEffect(() => {
       if (submitted) {
+        
         try {
           (async () => {
+            
+            
             await axios
               .post(`${USER_BACKEND_PORT}/login`, formDetails, {withCredentials: true})
-              .then((response) => {
+              .then((response) => {                
                   if (response?.data?.loginStatus) {
                   toast.success(response?.data?.message);
                   localStorage.setItem('jwtUser', response.data.token);
@@ -55,7 +58,7 @@ const LoginUser: FC = () => {
             <div className="lg:relative lg:block hidden  ">
             <img
               className=" lg:absolute lg:mt-96 ml-96 -z-10 scale-150 flex-shrink"
-              src="../../../public/ImageUploads/singup logo.webp"
+              src="/ImageUploads/singup logo.webp"
               alt=""
             />
           </div>

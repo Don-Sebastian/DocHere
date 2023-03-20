@@ -21,12 +21,19 @@ const RegisterUser: FC = () => {
     const updateForm = (value: User): void => {
         setSubmitted(true);
         setFormDetails(value);
-    };
+  };
+  
+  console.log(navigate);
+  
     
-    useEffect(() => {
-        if (submitted) {
+  useEffect(() => {
+          
+    if (submitted) {
+          
             try {
-                (async () => {
+              (async () => {
+                  console.log(submitted);
+                  
                         await axios
                           .post(`${USER_BACKEND_PORT}/register`, formDetails, {
                             withCredentials: true,
@@ -34,6 +41,7 @@ const RegisterUser: FC = () => {
                           .then((response) => {
                             if (response.data.created) {
                               toast.success(response.data.message);
+                              localStorage.setItem('jwtUser', response.data.token);
                               navigate("/");
                             } else if (response.data.errors)
                               toast.error(response.data.errors.message);
@@ -64,7 +72,7 @@ const RegisterUser: FC = () => {
           <div className="lg:relative lg:block hidden  ">
             <img
               className=" lg:absolute lg:mt-96 -ml-10 -z-10 scale-150 flex-shrink"
-              src="../../../public/ImageUploads/singup logo.webp"
+              src="/ImageUploads/singup logo.webp"
               alt=""
             />
           </div>
