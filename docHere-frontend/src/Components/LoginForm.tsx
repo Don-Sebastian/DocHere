@@ -1,16 +1,29 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect} from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "../Hooks/FormValidation";
+import jwt_decode from 'jwt-decode';
 
 interface RoleProps {
   role: String;
   updateForm: (arg: User) => void;
+  updateGoogleVerification: (arg: UserObject) => void;
 }
 
 interface User {
   email: string;
   password: string;
 }
+
+interface UserObject {
+  email: string;
+  email_verified: boolean;
+  given_name: string;
+  family_name: string;
+  name: string;
+  picture: string;
+}
+
+
 
 const LoginForm: FC<RoleProps> = (props: RoleProps): JSX.Element => {
   const {
@@ -55,6 +68,27 @@ const LoginForm: FC<RoleProps> = (props: RoleProps): JSX.Element => {
     if (Object.keys(errors).length === 0) props.updateForm(user);
   };
 
+  const handleCallbackResponse = (response: any) => {
+    const userObject: UserObject = jwt_decode(response.credential);
+    if ((userObject as UserObject).email_verified) props.updateGoogleVerification(userObject);
+  }
+
+  useEffect(() => {
+
+    (window as any).google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID,
+      callback: handleCallbackResponse,
+    });
+
+    (window as any).google.accounts.id.renderButton(
+      document.getElementById("signInDiv"),
+      {
+        theme: "outline",
+        size: "large",
+      }
+    );
+  }, []);
+
   return (
     <>
       <div className="lg:p-5 ">
@@ -62,9 +96,17 @@ const LoginForm: FC<RoleProps> = (props: RoleProps): JSX.Element => {
           onSubmit={handleSubmit}
           className="bg-white shadow-xl rounded-2xl lg:px-8 lg:pt-6 lg:pb-8 lg:mb-4 lg:border-8 border-4 p-5 lg:p-0 border-main-blue"
         >
-          <h1 className="text-center font-bold text-2xl text-main-blue">
+          <h1 className="text-center font-bold text-2xl text-main-blue mb-4">
             {props ? `Login ${props.role}` : ""}
           </h1>
+
+          <div className="flex flex-col justify-center items-center">
+            <div id="signInDiv"></div>
+            <div></div>
+            <p className="font-bold text-sm text-gray-400">
+              ------------------------- OR -------------------------
+            </p>
+          </div>
 
           <div className="mb-4">
             <label className="text-gray-700 text-sm font-bold mb-2">

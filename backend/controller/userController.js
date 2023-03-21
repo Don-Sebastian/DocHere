@@ -78,8 +78,20 @@ class UserController {
     }
   }
 
+  async postGoogleSignIn(req) {
+    try {
+      console.log(req.body);
+      // const { email, email_verified, name } = req.body;
+      // if (email_verified) {
+      //   const user = await userModel.findOne({ email });
+      //   if (!user) await userModel.create({ name, email });
+      // }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   async postHomePage(req, res) {
-    console.log(req.body.user);
     const { name, email } = req.body.user;
     res.status(200).send({ name, email, success: true });
   }
