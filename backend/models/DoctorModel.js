@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-const userSchema = new mongoose.Schema({
+const DoctorSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Incorrect Name'],
@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Password is required'],
     min: 3,
+  },
+  verified_by_admin: {
+    type: Boolean,
+    default: false,
   },
   googleId: {
     type: String,
@@ -39,14 +43,14 @@ const userSchema = new mongoose.Schema({
 });
 
 // eslint-disable-next-line func-names
-userSchema.pre('save', async function (next) {
+DoctorSchema.pre('save', async function (next) {
   const salt = await bcrypt.genSalt();
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 
 // eslint-disable-next-line func-names
-userSchema.statics.login = async function (email, password) {
+DoctorSchema.statics.login = async function (email, password) {
   const user = await this.findOne({ email });
   if (user) {
     const auth = await bcrypt.compare(password, user.password);
@@ -55,4 +59,4 @@ userSchema.statics.login = async function (email, password) {
   } else throw Error('Incorrect Email');
 };
 
-module.exports = mongoose.model('users', userSchema);
+module.exports = mongoose.model('doctors', DoctorSchema);

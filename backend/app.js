@@ -3,9 +3,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-// const passport = require('passport');
 const connectDB = require('./config/db');
 const userRouter = require('./routes/user-router');
+const doctorRouter = require('./routes/doc-router');
 
 const app = express();
 
@@ -28,9 +28,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.use(passport.initialize());
-// app.use(passport.session());
-
 app.use(cors(corsConfig));
 app.use(express.json());
 app.use(cookieParser());
@@ -38,5 +35,6 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use('/api/user', userRouter);
+app.use('/api/doctor', doctorRouter);
 
 module.exports = app;

@@ -4,6 +4,9 @@ import RegisterForm from "../../Components/RegisterForm";
 import { USER_BACKEND_PORT } from "../../Utils/Config/URLS";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { shallowCopy } from "immer/dist/internal";
+import { hideLoading, showLoading } from "../../Redux/Slices/alertsSlice";
 
 interface User {
   name: string;
@@ -13,6 +16,8 @@ interface User {
 }
 
 const RegisterUser: FC = () => {
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [submitted, setSubmitted] = useState(false);
   const [formDetails, setFormDetails] = useState({});
@@ -26,13 +31,13 @@ const RegisterUser: FC = () => {
     if (submitted) {
       try {
         (async () => {
-          console.log(submitted);
-
+          dispatch(showLoading());
           await axios
             .post(`${USER_BACKEND_PORT}/register`, formDetails, {
               withCredentials: true,
             })
             .then((response) => {
+              dispatch(hideLoading());
               if (response.data.created) {
                 toast.success(response.data.message);
                 localStorage.setItem("jwtUser", response.data.token);
@@ -42,10 +47,12 @@ const RegisterUser: FC = () => {
               else toast.error("Failed to create account. Please retry!");
             })
             .catch((error) => {
+              dispatch(hideLoading());
               toast.error(error.response.data.errors.message);
             });
         })();
       } catch (error: any) {
+        dispatch(hideLoading());
         toast.error(error);
       }
     }

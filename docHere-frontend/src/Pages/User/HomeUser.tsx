@@ -3,8 +3,11 @@ import { FC, useState, useEffect } from "react";
 import { USER_BACKEND_PORT } from "../../Utils/Config/URLS";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Redux/Store";
 
-const HomeUser: FC = () => {
+const HomeUser: FC = () => { 
+
   const [data, setData] = useState({
     name: "",
     email: "",

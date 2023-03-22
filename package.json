@@ -18,7 +18,6 @@
     "nodemon": "^2.0.21"
   },
   "dependencies": {
-    "create-react-app": "^5.0.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongoose": "^7.0.1"

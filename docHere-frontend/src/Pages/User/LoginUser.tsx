@@ -4,6 +4,8 @@ import axios from "axios";
 import { USER_BACKEND_PORT } from "../../Utils/Config/URLS";
 import { toast } from "react-hot-toast";
 import LoginForm from "../../Components/LoginForm";
+import { useDispatch } from "react-redux";
+import { hideLoading, showLoading } from "../../Redux/Slices/alertsSlice";
 
 interface User {
   email: string;
@@ -22,6 +24,8 @@ interface UserObject {
 // type UserDetails = UserObject | User;
 
 const LoginUser: FC = () => {
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [submitted, setSubmitted] = useState(false);
   const [googleVerification, setGoogleVerification] = useState(false);
@@ -41,11 +45,13 @@ const LoginUser: FC = () => {
   const handleFormSubmission = () => {
     try {
       (async () => {
+        dispatch(showLoading());
         await axios
           .post(`${USER_BACKEND_PORT}/login`, formDetails, {
             withCredentials: true,
           })
           .then((response) => {
+            dispatch(hideLoading());
             if (response?.data?.loginStatus) {
               toast.success(response?.data?.message);
               localStorage.setItem("jwtUser", response.data.token);
@@ -55,25 +61,39 @@ const LoginUser: FC = () => {
             else toast.error("Failed to create account. Please retry!");
           })
           .catch((error) => {
+            dispatch(hideLoading());
             toast.error(error?.response?.data?.errors?.message);
           });
       })();
     } catch (error: any) {
+      dispatch(hideLoading());
       toast.error(error);
     }
   }
 
   const handleGoogleVerification = async () => {
     try {
-      await axios.post(`${USER_BACKEND_PORT}/google/auth`, formDetails, {
-        withCredentials: true,
-      }).then((response) => {
-        console.log('Google response recieved', response);
-      }).catch((err) => {
-        console.error(err);
-        
-      })
+      dispatch(showLoading());
+      await axios
+        .post(`${USER_BACKEND_PORT}/google/auth`, formDetails, {
+          withCredentials: true,
+        })
+        .then((response) => {
+          dispatch(hideLoading());
+          if (response?.data?.loginStatus) {
+            toast.success(response?.data?.message);
+            localStorage.setItem("jwtUser", response.data.token);
+            navigate("/");
+          } else if (response?.data?.errors)
+            toast.error(response?.data?.errors?.message);
+          else toast.error("Failed to create account. Please retry!");
+        })
+        .catch((error) => {
+          dispatch(hideLoading());
+          toast.error(error?.response?.data?.errors?.message);
+        });
     } catch (error) {
+      dispatch(hideLoading());
       console.error(error);
     }
   };
