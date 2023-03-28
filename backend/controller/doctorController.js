@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable class-methods-use-this */
 const jwt = require('jsonwebtoken');
 const DoctorModel = require('../models/DoctorModel');
@@ -21,7 +22,7 @@ const handleError = (err) => {
   return errors;
 };
 
-class UserController {
+class DoctorController {
   async postDocRegister(req, res) {
     try {
       const { name, email, password } = req.body;
@@ -48,25 +49,26 @@ class UserController {
     }
   }
 
-  async postLogin(req, res) {
+  async postDocLogin(req, res) {
     try {
+      console.log(req.body);
       const { email, password } = req.body;
-      const user = await userModel.login(email, password);
-
+      const user = await DoctorModel.login(email, password);
+      console.log(user);
       // eslint-disable-next-line no-underscore-dangle
       const token = createToken(user._id);
 
-      res.cookie("jwtUser", token, {
-        withCredentials: true,
-        secure: true,
-        httpOnly: true,
-        sameSite: "none",
-        maxAge: maxAge * 1000,
-      });
+      //   res.cookie("jwtDoc", token, {
+      //     withCredentials: true,
+      //     secure: true,
+      //     httpOnly: true,
+      //     sameSite: "none",
+      //     maxAge: maxAge * 1000,
+      //   });
 
       res
         .status(202)
-        .json({ token, loginStatus: true, message: "Logged in Successfully" });
+        .json({ token, loginStatus: true, message: 'Logged in Successfully' });
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(error);
@@ -80,13 +82,13 @@ class UserController {
       // eslint-disable-next-line object-curly-spacing, object-curly-newline
       const { name, email, email_verified, picture } = req.body;
       if (email_verified) {
-        const user = await userModel.findOneAndUpdate(
+        const user = await DoctorModel.findOneAndUpdate(
           { email },
           {
             name,
             email,
             avatar: picture,
-            provider: "Google",
+            provider: 'Google',
             google_verified: email_verified,
           },
           {
@@ -94,7 +96,7 @@ class UserController {
             runValidators: false,
             new: true,
             lean: true,
-          }
+          },
         );
         if (user) {
           // eslint-disable-next-line no-underscore-dangle
@@ -102,7 +104,7 @@ class UserController {
           res.status(202).json({
             token,
             loginStatus: true,
-            message: "Logged in Successfully",
+            message: 'Logged in Successfully',
           });
         }
       }
@@ -114,10 +116,18 @@ class UserController {
     }
   }
 
+  async postUpdateDoctorProfile(req) {
+    console.log('hellooo');
+    // console.log(req);
+    console.log('hellooojhgjkhgjkhgkjhghjkgkjhgkjgghkgkhgjkhgkhgkjhgkjhg');
+    console.log(req.body);
+    console.log(req.file);
+  }
+
   async postHomePage(req, res) {
     const { name, email } = req.body.user;
     res.status(200).send({ name, email, success: true });
   }
 }
 
-module.exports = new UserController();
+module.exports = new DoctorController();

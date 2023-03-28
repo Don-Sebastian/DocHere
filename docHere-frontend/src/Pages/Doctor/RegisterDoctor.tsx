@@ -40,7 +40,7 @@ const RegisterDoctor = () => {
               if (response.data.created) {
                 toast.success(response.data.message);
                 localStorage.setItem("jwtDoc", response.data.token);
-                navigate("/");
+                navigate("/doctor/profile-doctor");
               } else if (response.data.errors)
                 toast.error(response.data.errors.message);
               else toast.error("Failed to create account. Please retry!");

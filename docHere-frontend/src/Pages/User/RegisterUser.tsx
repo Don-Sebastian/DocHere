@@ -5,7 +5,6 @@ import { USER_BACKEND_PORT } from "../../Utils/Config/URLS";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { shallowCopy } from "immer/dist/internal";
 import { hideLoading, showLoading } from "../../Redux/Slices/alertsSlice";
 
 interface User {
@@ -16,7 +15,6 @@ interface User {
 }
 
 const RegisterUser: FC = () => {
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [submitted, setSubmitted] = useState(false);
