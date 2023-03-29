@@ -51,10 +51,8 @@ class DoctorController {
 
   async postDocLogin(req, res) {
     try {
-      console.log(req.body);
       const { email, password } = req.body;
       const user = await DoctorModel.login(email, password);
-      console.log(user);
       // eslint-disable-next-line no-underscore-dangle
       const token = createToken(user._id);
 
@@ -116,17 +114,39 @@ class DoctorController {
     }
   }
 
-  async postUpdateDoctorProfile(req) {
-    console.log('hellooo');
-    // console.log(req);
-    console.log('hellooojhgjkhgjkhgkjhghjkgkjhgkjgghkgkhgjkhgkhgkjhgkjhg');
-    console.log(req.body);
-    console.log(req.file);
+  async postUpdateDoctorProfile(req, res) {
+    // eslint-disable-next-line object-curly-newline
+    const { speciality, educationQuality, medicalRegNumber, medRegCouncil, medRegYear } = req.body;
+    const { _id } = req.body.doctor;
+    const { path } = req.file;
+    const profileDetails = {
+      speciality,
+      educationQuality,
+      medicalRegNumber,
+      medRegCouncil,
+      medRegYear,
+      profileImageDoctor: path,
+    };
+    await DoctorModel.findByIdAndUpdate(_id, {
+      // eslint-disable-next-line max-len
+      $set: { profile: profileDetails },
+    }, {
+      new: true,
+    }).then((response) => {
+      // if(!response.verified_by_admin)
+      res.status(200).json({ response, success: true, message: 'Profile updated Successfully' });
+    }).catch((err) => {
+      res.status(400).json({ errors: err, success: false, message: 'Profile update failed!' });
+    })
   }
 
   async postHomePage(req, res) {
-    const { name, email } = req.body.user;
-    res.status(200).send({ name, email, success: true });
+    const {
+      name, email, verified_by_admin,
+    } = req.body.doctor;
+    res.status(200).send({
+      name, email, verified_by_admin, success: true,
+    });
   }
 }
 

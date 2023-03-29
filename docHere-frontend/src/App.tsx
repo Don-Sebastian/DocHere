@@ -1,14 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import RegisterUser from './Pages/User/RegisterUser';
 import {Toaster} from 'react-hot-toast'
-import HomeUser from './Pages/User/HomeUser';
-import LoginUser from './Pages/User/LoginUser';
 import { useSelector } from 'react-redux';
 import { RootState } from './Redux/Store';
 import Loader from './Components/Loader';
-import ProtectedRoutes from './Components/ProtectedRoutes';
 import UserRoutes from './Routes/UserRoutes';
 import DoctorRoutes from './Routes/DoctorRoutes';
+import AdminRoutes from './Routes/AdminRouters';
 
 function App() {
 
@@ -21,8 +18,9 @@ function App() {
       <Toaster position="top-center" reverseOrder={true} />
 
       <Routes>
-        <Route path='/*' element={<UserRoutes />} />
-        <Route path='/doctor/*' element={<DoctorRoutes />} />
+        <Route path="/*" element={<UserRoutes />} />
+        <Route path="/doctor/*" element={<DoctorRoutes />} />
+        <Route path="/admin/*" element={<AdminRoutes />} />
       </Routes>
     </BrowserRouter>
   );

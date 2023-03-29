@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import DoctorNavbar from '../../Components/DoctorNavbar';
+import DoctorNavbar from '../../Components/Doctor/DoctorNavbar';
 import ProfileDoctor from '../../Components/ProfileDoctor';
 
 const ProfileDoc: FC = () => {

@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const userRouter = require('./routes/user-router');
 const doctorRouter = require('./routes/doc-router');
+const adminRouter = require('./routes/admin-routes');
 
 const app = express();
 
@@ -36,5 +37,6 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/api/user', userRouter);
 app.use('/api/doctor', doctorRouter);
+app.use('/api/admin', adminRouter);
 
 module.exports = app;

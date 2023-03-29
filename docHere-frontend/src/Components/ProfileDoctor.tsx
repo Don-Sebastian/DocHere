@@ -21,36 +21,26 @@ type Inputs = {
 const ProfileDoctor = () => {
 
     const dispatch = useDispatch()
-    const [formDataHandle, setFormDataHandle] = useState();
     const [sendFormDetails, setSendFormDetails] = useState({})
+    const [newFormData, setNewFormData] = useState<FormData>();
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         
-        
         if (!Object.keys(errors).length) {
-            // setFormDataHandle(data);
-            // const formData = new FormData();
-
-            // formData.append('formData', data);
-            // await axios
-            //   .post(`${DOCTOR_BACKEND_PORT}/update-doctor-profile`, formData, {
-            //     withCredentials: true,
-            //   })
-            //   .then((response) => {
-            //     console.log(response);
-            //   })
-            //   .catch((errors) => {
-            //     console.error(errors);
-            //     toast.error(errors.message);
-            //   });
-            setSendFormDetails(data)
+            const formData = new FormData();
+            
+            formData.append("name", data.name);
+            formData.append("speciality", data.speciality);
+            formData.append('educationQuality', data.educationQuality);
+            formData.append("medicalRegNumber", data.medicalRegNumber.toString());
+            formData.append('medRegCouncil', data.medRegCouncil);
+            formData.append('medRegYear', data.medRegYear.toString());
+            for (let value of data.profileImageDoctor) formData.append("profileImageDoctor", value);
+            setNewFormData(formData);
+            setSendFormDetails(data);
         }
       
     };
-
-    // console.log(formData);
-    
-    // const ref = useRef();
     const {
       register,
       handleSubmit,
@@ -58,21 +48,23 @@ const ProfileDoctor = () => {
       formState: { errors },
     } = useForm<Inputs>();
 
-    // console.log(errors);
-
     const handleFormSubmit = async () => {
-        console.log(sendFormDetails);
-        
         dispatch(showLoading());
         
-        await axios.post(`${DOCTOR_BACKEND_PORT}/update-doctor-profile`, sendFormDetails, {
+        await axios
+          .post(`${DOCTOR_BACKEND_PORT}/update-doctor-profile`, newFormData, {
             withCredentials: true,
-        }).then((response) => {
-            console.log(response);
-        }).catch((errors) => {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("jwtDoc"),
+            },
+          })
+          .then((response) => {
+              toast.success(response.data.message);
+          })
+          .catch((errors) => {
             console.error(errors);
             toast.error(errors.message);
-        })
+          });
     }
 
     useEffect(() => {

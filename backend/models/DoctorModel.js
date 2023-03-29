@@ -40,6 +40,31 @@ const DoctorSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  profile: [{
+    speciality: {
+      type: String,
+      required: true,
+    },
+    educationQuality: {
+      type: String,
+      required: true,
+    },
+    medicalRegNumber: {
+      type: Number,
+      required: true,
+    },
+    medRegCouncil: {
+      type: String,
+      required: true,
+    },
+    medRegYear: {
+      type: String,
+      required: true,
+    },
+    profileImageDoctor: {
+      type: String,
+    },
+  }],
 });
 
 // eslint-disable-next-line func-names
