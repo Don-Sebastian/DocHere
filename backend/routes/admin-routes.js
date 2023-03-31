@@ -9,5 +9,9 @@ router.post('/admin-register', AdminController.postAdminRegister);
 router.post('/admin-login', AdminController.postAdminLogin);
 
 router.post('/admin-home', Auth.verifyAuthAdmin, AdminController.postAdminHomePage);
+router.delete('/delete-seenNotification/:notificationId', Auth.verifyAuthAdmin, AdminController.deleteSeenNotification);
+router.get('/all-doctor-list', Auth.verifyAuthAdmin, AdminController.getAllDoctorDetailsAdmin);
+router.get('/get-doctor-details/:doctorId', Auth.verifyAuthAdmin, AdminController.getDoctorDetailsById);
+router.put('/verify-Doctor/:doctorId', Auth.verifyAuthAdmin, AdminController.putVerifyDoctorAdminbyId);
 
 module.exports = router;

@@ -1,6 +1,13 @@
+/* eslint-disable max-len */
+/* eslint-disable import/newline-after-import */
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable camelcase */
 /* eslint-disable class-methods-use-this */
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+const { ObjectId } = mongoose.Types;
+const AdminModel = require('../models/AdminModel');
 const DoctorModel = require('../models/DoctorModel');
 
 const maxAge = 3 * 24 * 60 * 60;
@@ -117,7 +124,7 @@ class DoctorController {
   async postUpdateDoctorProfile(req, res) {
     // eslint-disable-next-line object-curly-newline
     const { speciality, educationQuality, medicalRegNumber, medRegCouncil, medRegYear } = req.body;
-    const { _id } = req.body.doctor;
+    const { _id, name } = req.body.doctor;
     const { path } = req.file;
     const profileDetails = {
       speciality,
@@ -132,8 +139,20 @@ class DoctorController {
       $set: { profile: profileDetails },
     }, {
       new: true,
-    }).then((response) => {
-      // if(!response.verified_by_admin)
+    // eslint-disable-next-line consistent-return
+    }).then(async (response) => {
+      const admin = await AdminModel.findOne({ email: process.env.ADMIN_MAIL_ID });
+      const index = admin.unseenNotifications.findIndex((val) => val.doctorId === new ObjectId(_id).toString());
+      if (index !== -1) admin.unseenNotifications[index].doctorName = name;
+      else {
+        admin.unseenNotifications.push({
+          doctorId: _id,
+          doctorName: name,
+        });
+      }
+
+      const updated = await AdminModel.findOneAndUpdate(admin._id, admin);
+      if (updated) return res.status(200).json({ response, success: true, message: 'Profile updated Successfully, Notification send to Admin!' });
       res.status(200).json({ response, success: true, message: 'Profile updated Successfully' });
     }).catch((err) => {
       res.status(400).json({ errors: err, success: false, message: 'Profile update failed!' });

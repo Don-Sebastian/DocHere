@@ -3,16 +3,18 @@ import { FC, useState, useEffect } from "react";
 import { ADMIN_BACKEND_PORT } from "../../Utils/Config/URLS";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Redux/Store";
 import NavbarAdmin from "../../Components/Admin/NavbarAdmin";
+import { clearAdminDetails, updateAdminDetails } from "../../Redux/Slices/AdminDetailsSlice";
 
 const HomeAdmin: FC = () => {
   const [data, setData] = useState({
     name: "",
     email: "",
   });
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
   const getUserData = async () => {
     try {
@@ -29,8 +31,9 @@ const HomeAdmin: FC = () => {
         .then((response) => {
           console.log(response);
 
-          if (response.data.success) setData(response?.data);
-          else {
+            if (response.data.success) {
+              dispatch(updateAdminDetails(response?.data))
+          } else {
             toast.error(response?.data?.message);
             navigate("/admin/admin-login");
           }
@@ -48,7 +51,8 @@ const HomeAdmin: FC = () => {
   };
 
   const handleLogOut = () => {
-    localStorage.removeItem("jwtUser");
+      localStorage.removeItem("jwtUser");
+      dispatch(clearAdminDetails());
     toast.success("Logged out successfully!");
     navigate("/admin/admin-login");
   };

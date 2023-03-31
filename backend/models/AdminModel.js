@@ -12,6 +12,20 @@ const AdminSchema = new mongoose.Schema({
     type: String,
     required: [true, 'This field is required'],
   },
+  unseenNotifications: [{
+    doctorId: {
+      type: String,
+      required: true,
+    },
+    doctorName: {
+      type: String,
+      required: true,
+    },
+    onclick: {
+      type: String,
+      required: true,
+    },
+  }],
   createdAt: {
     type: Date,
     default: Date.now,

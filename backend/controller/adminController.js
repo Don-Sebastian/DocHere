@@ -1,7 +1,9 @@
+/* eslint-disable max-len */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-underscore-dangle */
 const jwt = require('jsonwebtoken');
 const AdminModel = require('../models/AdminModel');
+const DoctorModel = require('../models/DoctorModel');
 
 const maxAge = 3 * 24 * 60 * 60;
 
@@ -62,8 +64,58 @@ class AdminController {
   }
 
   async postAdminHomePage(req, res) {
-    const { email } = req.body.admin;
-    res.status(200).send({ email, success: true });
+    const { email, unseenNotifications } = req.body.admin;
+    res.status(200).send({ email, unseenNotifications, success: true });
+  }
+
+  async deleteSeenNotification(req, res) {
+    const { _id } = req.body.admin;
+    const { notificationId } = req.params;
+
+    await AdminModel.findByIdAndUpdate(
+      { _id },
+      { $pull: { unseenNotifications: { _id: notificationId } } },
+    )
+      .then((response) => {
+        res.status(200).json({ response, updated: true });
+      })
+      .catch((error) => {
+        res
+          .status(500)
+          .json({ error, message: 'Server Error', updated: false });
+      });
+  }
+
+  async getDoctorDetailsById(req, res) {
+    const { doctorId } = req.params;
+    try {
+      const doctorDetails = await DoctorModel.findOne({ _id: doctorId });
+      if (doctorDetails) res.status(200).json({ doctorDetails, itemFound: true, message: 'Doctor Details found successfully' });
+    } catch (error) {
+      res.status(500).json({ error, itemFound: false, message: 'Server Error' });
+    }
+  }
+
+  async putVerifyDoctorAdminbyId(req, res) {
+    const { doctorId } = req.params;
+    const { isVerified } = req.body;
+    try {
+      const doctor = await DoctorModel.findOneAndUpdate({ _id: doctorId }, { $set: { verified_by_admin: isVerified } });
+      if (!doctor) return res.status(404).json({ updated: false, message: 'Doctor not found' });
+      return res.status(200).json({ doctor, updated: true, message: 'Doctor verification updated!' })
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error, updated: false, message: 'Server Error' })
+    }
+  }
+
+  async getAllDoctorDetailsAdmin(req, res) {
+    try {
+      const doctorList = await DoctorModel.find();
+      res.status(200).json({ doctorList, collected: true, message: 'Doctor List optained' });
+    } catch (error) {
+      res.status(500).json({ error, collected: false, message: 'Server Error' });
+    }
   }
 }
 
